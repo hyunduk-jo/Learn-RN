@@ -1,11 +1,32 @@
+import { useMutation, gql } from '@apollo/client';
 import React, { useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { isLoggedInVar } from '../apollo';
 import AuthButton from '../components/auth/AuthButton';
 import AuthLayout from '../components/auth/AuthLayout';
 import { TextInput } from '../components/auth/AuthShared';
 
+const LOGIN_MUTATION = gql`
+  mutation login($email: String!, $password: String!){
+    login(email: $email, password: $password) {
+      ok
+      token
+      error
+    }
+  }
+`;
+
 export default function Login() {
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
+
+  const onCompleted = (data) => {
+    const { login: { ok, token } } = data;
+    if (ok) {
+      isLoggedInVar(true);
+    }
+  }
+
+  const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION, { onCompleted });
 
   const passwordRef = useRef();
 
@@ -13,13 +34,20 @@ export default function Login() {
     nextOne?.current?.focus();
   }
 
-  const onValid = (data) => {
-    console.log(data)
+  const onValid = async (data) => {
+    if (!loading) {
+      loginMutation({ variables: { ...data } });
+    }
   }
   useEffect(() => {
-    register("email");
-    register("password");
+    register("email", {
+      required: true
+    });
+    register("password", {
+      required: true
+    });
   }, [register])
+
   return (
     <AuthLayout>
       <TextInput
@@ -42,7 +70,7 @@ export default function Login() {
         onChangeText={text => setValue("password", text)}
         autoCapitalize="none"
       />
-      <AuthButton text="Log In" disabled={false} onPress={handleSubmit(onValid)} />
+      <AuthButton loading={loading} text="Log In" disabled={!watch("email") || !watch("password")} onPress={handleSubmit(onValid)} />
     </AuthLayout>
   )
 }

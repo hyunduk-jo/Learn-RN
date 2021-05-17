@@ -7,7 +7,7 @@ import Signup from '../screens/Signup';
 const Stack = createStackNavigator();
 
 export default function LoggedOutNav() {
-  return <Stack.Navigator screenOptions={{
+  return <Stack.Navigator mode="card" screenOptions={{
     headerBackTitleVisible: false,
     headerTitle: false,
     headerTransparent: true,
