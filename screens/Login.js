@@ -16,8 +16,13 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-export default function Login() {
-  const { register, handleSubmit, setValue, watch } = useForm();
+export default function Login({ route: { params } }) {
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      password: params?.password,
+      email: params?.email
+    }
+  });
 
   const onCompleted = (data) => {
     const { login: { ok, token } } = data;
@@ -47,10 +52,10 @@ export default function Login() {
       required: true
     });
   }, [register])
-
   return (
     <AuthLayout>
       <TextInput
+        value={watch("email")}
         placeholder="Email"
         keyboardType="email-address"
         placeholderTextColor={"rgba(255, 255, 255, 0.8)"}
@@ -60,6 +65,7 @@ export default function Login() {
         autoCapitalize="none"
       />
       <TextInput
+        value={watch("password")}
         ref={passwordRef}
         placeholder="Password"
         secureTextEntry

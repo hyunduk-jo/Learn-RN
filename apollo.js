@@ -4,7 +4,7 @@ export const isLoggedInVar = makeVar(false);
 
 const client = new ApolloClient({
   cache: new InMemoryCache,
-  uri: "https://modern-elephant-24.loca.lt/graphql"
+  uri: "https://dangerous-otter-21.loca.lt/graphql"
 })
 
 export default client;

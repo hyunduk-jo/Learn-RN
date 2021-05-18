@@ -3,9 +3,32 @@ import AuthButton from '../components/auth/AuthButton';
 import React, { useRef, useEffect } from 'react';
 import { TextInput } from '../components/auth/AuthShared';
 import { useForm } from 'react-hook-form';
+import { gql, useMutation } from '@apollo/client';
 
-export default function Signup() {
-  const { register, handleSubmit, setValue } = useForm();
+const CREATE_USER = gql`
+  mutation createUser($email: String!, $firstName: String!, $lastName: String, $userName: String!, $password: String!){
+    createUser(email: $email, firstName: $firstName, lastName: $lastName, userName: $userName, password: $password){
+      ok
+      error
+    }
+  }
+`;
+
+export default function Signup({ navigation }) {
+  const { register, handleSubmit, setValue, getValues, watch } = useForm();
+
+  const onCompleted = (data) => {
+    const { createUser: { ok } } = data;
+    const { email, password } = getValues();
+    if (ok) {
+      navigation.navigate("Login", {
+        email,
+        password
+      })
+    }
+  }
+
+  const [createUserMutation, { loading }] = useMutation(CREATE_USER, { onCompleted });
 
   const lastNameRef = useRef();
   const userNameRef = useRef();
@@ -17,13 +40,13 @@ export default function Signup() {
   }
 
   useEffect(() => {
-    register("firstname", {
+    register("firstName", {
       required: true,
     });
-    register("lastname", {
+    register("lastName", {
       required: true,
     });
-    register("username", {
+    register("userName", {
       required: true,
     });
     register("email", {
@@ -35,7 +58,9 @@ export default function Signup() {
   }, [register])
 
   const onValid = (data) => {
-    console.log(data)
+    if (!loading) {
+      createUserMutation({ variables: { ...data } })
+    }
   }
   return (
     <AuthLayout>
@@ -45,7 +70,7 @@ export default function Signup() {
         placeholderTextColor={"rgba(255, 255, 255, 0.8)"}
         returnKeyType="next"
         onSubmitEditing={() => onNext(lastNameRef)}
-        onChangeText={text => setValue("firstname", text)}
+        onChangeText={text => setValue("firstName", text)}
       />
       <TextInput
         ref={lastNameRef}
@@ -53,7 +78,7 @@ export default function Signup() {
         placeholderTextColor={"rgba(255, 255, 255, 0.8)"}
         returnKeyType="next"
         onSubmitEditing={() => onNext(userNameRef)}
-        onChangeText={text => setValue("lastname", text)}
+        onChangeText={text => setValue("lastName", text)}
       />
       <TextInput
         ref={userNameRef}
@@ -62,7 +87,7 @@ export default function Signup() {
         returnKeyType="next"
         onSubmitEditing={() => onNext(emailRef)}
         autoCapitalize="none"
-        onChangeText={text => setValue("username", text)}
+        onChangeText={text => setValue("userName", text)}
       />
       <TextInput
         ref={emailRef}
@@ -85,7 +110,19 @@ export default function Signup() {
         onChangeText={text => setValue("password", text)}
         onSubmitEditing={handleSubmit(onValid)}
       />
-      <AuthButton text="Sign Up" disabled={false} onPress={handleSubmit(onValid)} />
+      <AuthButton
+        text="Sign Up"
+        loading={loading}
+        disabled={
+          !watch("email") |
+          !watch("firstName") |
+          !watch("lastName") |
+          !watch("userName") |
+          !watch("password")
+        }
+        onPress={handleSubmit(onValid)}
+
+      />
     </AuthLayout>
   )
 }
