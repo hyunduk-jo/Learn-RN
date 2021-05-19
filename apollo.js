@@ -12,7 +12,7 @@ export const logUserIn = async token => {
 
 const client = new ApolloClient({
   cache: new InMemoryCache,
-  uri: "https://new-rattlesnake-27.loca.lt/graphql"
+  uri: "https://helpless-squid-43.loca.lt/graphql"
 })
 
 export default client;

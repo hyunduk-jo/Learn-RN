@@ -19,8 +19,8 @@ const LOGIN_MUTATION = gql`
 export default function Login({ route: { params } }) {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
-      password: params?.password,
-      email: params?.email
+      password: params?.password || "",
+      email: params?.email || ""
     }
   });
 
