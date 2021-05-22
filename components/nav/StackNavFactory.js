@@ -6,22 +6,32 @@ import Feed from '../../screens/Feed';
 import Notification from '../../screens/Notifications';
 import Me from '../../screens/Me';
 import Search from '../../screens/Search';
+import { Image } from 'react-native';
+import Likes from '../../screens/Likes';
+import Comments from '../../screens/Comments';
 
 const Stack = createStackNavigator();
 
 export default function StackNavFactory({ screenName }) {
-  return <Stack.Navigator screenOptions={{
-    headerStyle: {
-      backgroundColor: "black",
-      borderBottomColor: "rgba(255,255,255,0.3)"
-    },
-    headerTintColor: "white"
-  }}>
-    {screenName === "Feed" ? <Stack.Screen name="Feed" component={Feed} /> : null}
+  return <Stack.Navigator
+    headerMode="screen"
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: "black",
+        borderBottomColor: "rgba(255,255,255,0.3)",
+        shadowColor: "rgba(255,255,255,0.3)"
+      },
+      headerTintColor: "white"
+    }}>
+    {screenName === "Feed" ? <Stack.Screen name="Feed" component={Feed} options={{
+      headerTitle: () => <Image resizeMode="contain" style={{ width: "100%", height: 40 }} source={require("../../assets/logo.png")} />
+    }} /> : null}
     {screenName === "Search" ? <Stack.Screen name="Search" component={Search} /> : null}
     {screenName === "Notification" ? <Stack.Screen name="Notification" component={Notification} /> : null}
     {screenName === "Me" ? <Stack.Screen name="Me" component={Me} /> : null}
     <Stack.Screen name="Profile" component={Profile} />
     <Stack.Screen name="Photo" component={Photo} />
+    <Stack.Screen name="Likes" component={Likes} />
+    <Stack.Screen name="Comments" component={Comments} />
   </Stack.Navigator>
 }
