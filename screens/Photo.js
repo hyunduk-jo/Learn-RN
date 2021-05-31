@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { logUserOut } from '../apollo';
 
 export default function Photo({ navigation }) {
   return (
@@ -7,6 +8,9 @@ export default function Photo({ navigation }) {
       <Text style={{ color: "white" }}>Hello This Is Photo</Text>
       <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
         <Text style={{ color: "white" }}>Profile</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={logUserOut}>
+        <Text style={{ color: "white" }}>LOGOUT</Text>
       </TouchableOpacity>
     </View>
   )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Image, TouchableOpacity, useWindowDimensions } from 'react-native';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { gql, useMutation } from '@apollo/client';
@@ -103,7 +103,10 @@ export default function Photo({ id, user, caption, file, isLiked, likes }) {
     })
   }, [file])
   return <Container>
-    <Header onPress={() => navigation.navigate("Profile")}>
+    <Header onPress={() => navigation.navigate("Profile", {
+      userName: user.userName,
+      id: user.id
+    })}>
       <UserAvatar resizeMode="cover" source={{ uri: user.avatar }} />
       <Username>{user.userName}</Username>
     </Header>
@@ -117,7 +120,9 @@ export default function Photo({ id, user, caption, file, isLiked, likes }) {
           <Ionicons name="chatbubble-outline" color="white" size={22} />
         </Action>
       </Actions>
-      <TouchableOpacity onPress={() => navigation.navigate("Likes")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Likes", {
+        photoId: id
+      })}>
         <Likes>{likes === 1 ? "1 like" : likes + " likes"}</Likes>
       </TouchableOpacity>
       <Caption>
